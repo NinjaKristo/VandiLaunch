@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
 }
@@ -14,13 +16,30 @@ android {
         versionName = "1.0"
     }
 
+    // The release key lives outside the repo; keystore.properties (gitignored) points at it.
+    // Without that file the release build falls back to the local debug key.
+    val keystoreFile = rootProject.file("keystore.properties")
+    val keystore = Properties().apply {
+        if (keystoreFile.exists()) keystoreFile.inputStream().use { load(it) }
+    }
+
+    signingConfigs {
+        if (keystoreFile.exists()) {
+            create("release") {
+                storeFile = file(keystore.getProperty("storeFile"))
+                storePassword = keystore.getProperty("storePassword")
+                keyAlias = keystore.getProperty("keyAlias")
+                keyPassword = keystore.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Personal sideload build: signed with the local debug key.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (keystoreFile.exists()) "release" else "debug")
         }
     }
 

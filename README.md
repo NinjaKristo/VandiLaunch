@@ -20,7 +20,22 @@ Needs the Android SDK (platform 36) and JDK 17 or newer. No third-party librarie
 ./gradlew testDebugUnitTest assembleRelease
 ```
 
-The APK lands in `app/build/outputs/apk/release/app-release.apk`. It is signed with the local debug key, which is fine for sideloading; installing a build from a different machine over it requires uninstalling first.
+The APK lands in `app/build/outputs/apk/release/app-release.apk`.
+
+Release builds are signed with the key named in `keystore.properties` (not in the repo):
+
+```
+storeFile=/path/to/release.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
+
+Without that file the build is signed with the local debug key instead. Android only installs an update over an existing app when both are signed with the same key.
+
+## Install
+
+Download the APK from the [latest release](https://github.com/NinjaKristo/VandiLaunch/releases/latest) and open it on the phone.
 
 ## Layout
 
