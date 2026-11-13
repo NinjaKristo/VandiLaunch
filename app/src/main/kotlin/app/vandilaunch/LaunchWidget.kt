@@ -83,7 +83,7 @@ class LaunchWidget : AppWidgetProvider() {
             return views
         }
 
-        /** Countdown on top, then the time, then a small date. */
+        /** The same four lines with the countdown moved to the top: countdown, date, day, time. */
         private fun close(c: Context, l: Launch, count: Times.Count, now: Long, zone: ZoneId): RemoteViews {
             val views = RemoteViews(c.packageName, R.layout.widget_close)
             when (count) {
@@ -101,8 +101,9 @@ class LaunchWidget : AppWidgetProvider() {
                     views.setChronometerCountDown(R.id.chrono, true)
                 }
             }
+            views.setTextViewText(R.id.date, Times.monthDay(l, zone))
+            views.setTextViewText(R.id.day, Times.dayName(l, zone).uppercase(Locale.US))
             views.setTextViewText(R.id.time, Ui.time(c, l, zone))
-            views.setTextViewText(R.id.date, Times.dateLine(l, zone))
             return views
         }
     }

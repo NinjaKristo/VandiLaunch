@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 1x1, launch day: the countdown takes the top line, then time, then a small date. -->
+<!-- 1x1, launch day: the same four lines, with the countdown moved to the top. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
-    android:paddingStart="4dp"
-    android:paddingTop="5dp"
-    android:paddingEnd="4dp"
-    android:paddingBottom="5dp">
+    android:paddingStart="3dp"
+    android:paddingTop="3dp"
+    android:paddingEnd="3dp"
+    android:paddingBottom="3dp">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.7">
+        android:layout_weight="1.5">
 
         <TextView
             android:id="@+id/count"
             style="@style/WidgetLine"
             android:layout_height="match_parent"
-            android:autoSizeMaxTextSize="26sp"
+            android:autoSizeMaxTextSize="22sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/accent" />
 
@@ -28,7 +28,7 @@
             android:id="@+id/chrono"
             style="@style/WidgetLine"
             android:layout_height="match_parent"
-            android:autoSizeMaxTextSize="26sp"
+            android:autoSizeMaxTextSize="22sp"
             android:fontFamily="sans-serif-medium"
             android:fontFeatureSettings="tnum"
             android:textColor="@color/accent"
@@ -36,17 +36,24 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/date"
         style="@style/WidgetLine"
-        android:layout_weight="1.3"
-        android:autoSizeMaxTextSize="20sp"
+        android:layout_weight="1.15"
+        android:autoSizeMaxTextSize="17sp"
         android:fontFamily="sans-serif-medium" />
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/day"
         style="@style/WidgetLine"
-        android:layout_weight="0.8"
-        android:autoSizeMaxTextSize="11sp"
-        android:letterSpacing="0.04"
+        android:layout_weight="0.65"
+        android:autoSizeMaxTextSize="9sp"
+        android:letterSpacing="0.06"
         android:textColor="@color/muted" />
+
+    <TextView
+        android:id="@+id/time"
+        style="@style/WidgetLine"
+        android:layout_weight="1.15"
+        android:autoSizeMaxTextSize="17sp"
+        android:fontFamily="sans-serif-medium" />
 </LinearLayout>
