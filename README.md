@@ -1,4 +1,4 @@
-# Vandi Launch
+<h1><img src="screenshots/icon.png" width="48" align="center" alt=""> Vandi Launch</h1>
 
 Android app and widget that tell you when the next rocket launches from Vandenberg. Nothing else.
 
