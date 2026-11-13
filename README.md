@@ -1,47 +1,30 @@
 # Vandi Launch
 
-A minimal Android app that tells you when rockets launch from Vandenberg Space Force Base, and nothing else.
+Android app and widget that tell you when the next rocket launches from Vandenberg. Nothing else.
 
-- **Next launch**: date (`Dec 2`), day, time and a live countdown, with the provider's logo and rocket on one faded line above. A link to details covers everything else.
-- **Video**: the webcast plays inside the app, below the countdown. Full screen keeps the countdown on top of the video.
-- **Reminders**: 24 hours, 1 hour and 10 minutes before launch (each can be switched off), plus a notice when a launch within the next two days changes time.
-- **1x1 widget**: `Dec 2` / `WEDNESDAY` / `9:04pm` / `4 days`. On launch day the countdown moves to the top line: whole hours, then a ticking `H:MM:SS` for the last five hours.
+<p>
+  <img src="screenshots/main.png" width="240" alt="Main page">
+  <img src="screenshots/stream.png" width="240" alt="Main page with the stream open">
+  <img src="screenshots/widget.png" width="240" alt="Widget counting down">
+</p>
 
-Launches without a confirmed time show `TBD` and never trigger a reminder.
-
-## Data
-
-Schedule data comes from [Launch Library 2](https://thespacedevs.com/llapi) by The Space Devs: free, no key, limited to 15 requests an hour. The app asks only for Vandenberg (location id 11), refreshes about every two hours, and every 20 minutes in the last six hours before a launch.
-
-## Build
-
-Needs the Android SDK (platform 36) and JDK 17 or newer. No third-party libraries.
-
-```
-./gradlew testDebugUnitTest assembleRelease
-```
-
-The APK lands in `app/build/outputs/apk/release/app-release.apk`.
-
-Release builds are signed with the key named in `keystore.properties` (not in the repo):
-
-```
-storeFile=/path/to/release.jks
-storePassword=...
-keyAlias=...
-keyPassword=...
-```
-
-Without that file the build is signed with the local debug key instead. Android only installs an update over an existing app when both are signed with the same key.
+- Next launch: date, time, countdown
+- Stream plays in the app; full screen keeps the countdown on top
+- Reminders 24 h, 1 h and 10 min before, plus a notice if the time changes
+- 1x1 widget; the countdown moves to the top on launch day
 
 ## Install
 
-Download the APK from the [latest release](https://github.com/NinjaKristo/VandiLaunch/releases/latest) and open it on the phone.
+Get the APK from the [latest release](https://github.com/NinjaKristo/VandiLaunch/releases/latest). Android 8 or newer.
 
-## Layout
+## Data
 
-| File | Role |
-| --- | --- |
-| `Times.kt`, `Reminders.kt`, `LaunchJson.kt` | Pure logic: formatting, countdown rules, reminder rules, parsing. Unit tested. |
-| `Api.kt`, `Store.kt`, `Sync.kt` | Fetch, cache, and scheduling of alarms and the refresh job. |
-| `LaunchWidget.kt`, `Notifier.kt`, `MainActivity.kt`, `Background.kt` | Widget, notifications, the one screen, and the receivers. |
+[Launch Library 2](https://thespacedevs.com/llapi) by The Space Devs. Free, no key.
+
+## Build
+
+```
+./gradlew assembleRelease
+```
+
+Android SDK 36, JDK 17+. Release signing reads `keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`); without it the debug key is used.
