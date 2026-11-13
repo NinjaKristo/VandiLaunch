@@ -1,7 +1,9 @@
 package app.vandilaunch
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -23,10 +25,19 @@ class TimesTest {
     private val l = launch(net)
 
     @Test
-    fun formatsDateAndTimeWithoutYear() {
-        assertEquals("WED-12/2", Times.dateLine(l, zone))
+    fun formatsDateAndTimeInPieces() {
+        assertEquals("12•2", Times.monthDay(l, zone))
+        assertEquals("Wednesday", Times.dayName(l, zone))
+        assertEquals("9:04", Times.hourMinute(l, zone))
+        assertEquals("pm", Times.amPm(l, zone))
+        assertEquals("am", Times.amPm(launch(at(2026, 12, 2, 4, 30)), zone))
+    }
+
+    @Test
+    fun formatsOneLineForNotifications() {
+        assertEquals("WED-12•2", Times.dateLine(l, zone))
         assertEquals("9:04pm", Times.timeLine(l, zone))
-        assertEquals("WED-12/2 9:04pm", Times.whenLine(l, zone))
+        assertEquals("WED-12•2 9:04pm", Times.whenLine(l, zone))
         assertEquals("12:30am", Times.clock(at(2026, 12, 2, 0, 30), zone))
         assertEquals("12:00pm", Times.clock(at(2026, 12, 2, 12, 0), zone))
     }
@@ -34,27 +45,30 @@ class TimesTest {
     @Test
     fun countsDaysUntilLaunchDay() {
         val c = Times.count(l, at(2026, 11, 29, 23, 0), zone) as Times.Label
-        assertEquals("3d", c.text)
+        assertEquals("3 days", c.text)
+        assertFalse(c.close)
         assertEquals(at(2026, 11, 30, 0, 0), c.nextChange)
         // Late the night before is still a day away, even though under 24h remain.
-        assertEquals("1d", (Times.count(l, at(2026, 12, 1, 23, 59), zone) as Times.Label).text)
+        assertEquals("1 day", (Times.count(l, at(2026, 12, 1, 23, 59), zone) as Times.Label).text)
     }
 
     @Test
     fun countsHoursOnLaunchDay() {
         val c = Times.count(l, at(2026, 12, 2, 0, 0), zone) as Times.Label
-        assertEquals("21h", c.text)
+        assertEquals("21 hours", c.text)
+        assertTrue(c.close)
         assertEquals(net - 21 * Times.HOUR, c.nextChange)
         val six = Times.count(l, net - 6 * Times.HOUR, zone) as Times.Label
-        assertEquals("6h", six.text)
+        assertEquals("6 hours", six.text)
         assertEquals(net - 5 * Times.HOUR, six.nextChange)
-        assertEquals("5h", (Times.count(l, net - 5 * Times.HOUR - 1, zone) as Times.Label).text)
+        assertEquals("5 hours", (Times.count(l, net - 5 * Times.HOUR - 1, zone) as Times.Label).text)
     }
 
     @Test
     fun ticksForTheLastFiveHours() {
         assertEquals(Times.Ticking(net, net), Times.count(l, net - 5 * Times.HOUR, zone))
         assertEquals(Times.Ticking(net, net), Times.count(l, net - 1, zone))
+        assertTrue(Times.count(l, net - 1, zone).close)
     }
 
     @Test
@@ -70,7 +84,7 @@ class TimesTest {
     fun dayCountHandsOverToTheClockBeforeMidnightWhenNeeded() {
         val early = launch(at(2026, 12, 3, 2, 0))
         val c = Times.count(early, at(2026, 12, 2, 20, 0), zone) as Times.Label
-        assertEquals("1d", c.text)
+        assertEquals("1 day", c.text)
         assertEquals(early.netMillis - Times.TICK_FROM, c.nextChange)
     }
 
@@ -78,6 +92,7 @@ class TimesTest {
     fun showsNowAfterLiftoffThenMovesOn() {
         val c = Times.count(l, net + Times.MIN, zone) as Times.Label
         assertEquals("NOW", c.text)
+        assertTrue(c.close)
         assertEquals(net + Times.LIVE_WINDOW, c.nextChange)
 
         val later = launch(net + Times.DAY).copy(id = "b")
@@ -97,18 +112,27 @@ class TimesTest {
         // Launch Library stores "November" as the last day of the month, midnight UTC,
         // which is still the 29th in California.
         val month = launch(ZonedDateTime.parse("2026-11-30T00:00:00Z").toInstant().toEpochMilli(), precision = 7)
+        assertEquals("NOV", Times.monthDay(month, zone))
+        assertEquals("", Times.dayName(month, zone))
+        assertEquals("TBD", Times.hourMinute(month, zone))
+        assertEquals("", Times.amPm(month, zone))
         assertEquals("NOV TBD", Times.whenLine(month, zone))
-        assertEquals("TBD", (Times.count(month, at(2026, 11, 13, 9, 0), zone) as Times.Label).text)
+        val c = Times.count(month, at(2026, 11, 13, 9, 0), zone) as Times.Label
+        assertEquals("TBD", c.text)
+        assertFalse(c.close)
 
         val day = launch(ZonedDateTime.parse("2026-11-30T00:00:00Z").toInstant().toEpochMilli(), precision = 3)
-        assertEquals("MON-11/30 TBD", Times.whenLine(day, zone))
-        assertEquals("17d", (Times.count(day, at(2026, 11, 13, 9, 0), zone) as Times.Label).text)
+        assertEquals("11•30", Times.monthDay(day, zone))
+        assertEquals("Monday", Times.dayName(day, zone))
+        assertEquals("MON-11•30 TBD", Times.whenLine(day, zone))
+        assertEquals("17 days", (Times.count(day, at(2026, 11, 13, 9, 0), zone) as Times.Label).text)
         assertEquals("TODAY", (Times.count(day, at(2026, 11, 30, 9, 0), zone) as Times.Label).text)
     }
 
     @Test
     fun longCountdownAndRoughWording() {
-        assertEquals("3d 04:05:06", Times.longCountdown(3 * Times.DAY + 4 * Times.HOUR + 5 * Times.MIN + 6_000))
+        assertEquals("3 days 04:05:06", Times.longCountdown(3 * Times.DAY + 4 * Times.HOUR + 5 * Times.MIN + 6_000))
+        assertEquals("1 day 00:00:00", Times.longCountdown(Times.DAY))
         assertEquals("4:05:06", Times.longCountdown(4 * Times.HOUR + 5 * Times.MIN + 6_999))
         assertEquals("24h", Times.roughly(24 * Times.HOUR - 2_000))
         assertEquals("1h", Times.roughly(Times.HOUR))
@@ -119,8 +143,6 @@ class TimesTest {
     @Test
     fun derivedNames() {
         assertEquals("USSF-317", l.mission)
-        assertEquals("SpaceX · Falcon 9", l.who)
-        assertEquals("SLC-4E", l.shortPad)
         assertEquals("https://spacelaunchnow.me/launch/falcon-9-block-5-ussf-317", l.detailsUrl)
         assertEquals("https://x.com/live", l.copy(liveUrl = "https://x.com/live").watchUrl)
     }

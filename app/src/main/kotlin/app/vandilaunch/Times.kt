@@ -22,19 +22,25 @@ object Times {
     const val TICK_FROM = 5 * HOUR
 
     private val DOW = DateTimeFormatter.ofPattern("EEE", Locale.US)
+    private val DAY_NAME = DateTimeFormatter.ofPattern("EEEE", Locale.US)
     private val MONTH = DateTimeFormatter.ofPattern("MMM", Locale.US)
     private val CLOCK = DateTimeFormatter.ofPattern("h:mm", Locale.US)
 
     /** What the small countdown shows, and when it next needs redrawing. */
     sealed interface Count {
         val nextChange: Long
+
+        /** Launch day or later: the countdown, not the date, is the headline. */
+        val close: Boolean
     }
 
-    /** Static text such as "3d", "7h", "NOW" or "TBD". */
-    data class Label(val text: String, override val nextChange: Long) : Count
+    /** Static text such as "3 days", "7 hours", "NOW" or "TBD". */
+    data class Label(val text: String, override val nextChange: Long, override val close: Boolean = false) : Count
 
     /** A live H:MM:SS clock counting down to [net]. */
-    data class Ticking(val net: Long, override val nextChange: Long) : Count
+    data class Ticking(val net: Long, override val nextChange: Long) : Count {
+        override val close: Boolean get() = true
+    }
 
     /** Launches still worth showing, soonest first. */
     fun upcoming(list: List<Launch>, now: Long): List<Launch> =
@@ -49,22 +55,38 @@ object Times {
     private fun at(l: Launch, zone: ZoneId): ZonedDateTime =
         Instant.ofEpochMilli(l.netMillis).atZone(if (l.timeKnown) zone else ZoneOffset.UTC)
 
-    /** "FRI-12/2", or just "DEC" when only the month is known. */
-    fun dateLine(l: Launch, zone: ZoneId): String {
+    /** "12•2", or just "DEC" when only the month is known. */
+    fun monthDay(l: Launch, zone: ZoneId): String {
         val z = at(l, zone)
-        return if (l.dateKnown) "${DOW.format(z).uppercase(Locale.US)}-${z.monthValue}/${z.dayOfMonth}"
-        else MONTH.format(z).uppercase(Locale.US)
+        return if (l.dateKnown) "${z.monthValue}•${z.dayOfMonth}" else MONTH.format(z).uppercase(Locale.US)
     }
 
+    /** "Friday", or "" when the day is not known. */
+    fun dayName(l: Launch, zone: ZoneId): String = if (l.dateKnown) DAY_NAME.format(at(l, zone)) else ""
+
+    /** "9:04", or "TBD". */
+    fun hourMinute(l: Launch, zone: ZoneId): String = if (l.timeKnown) CLOCK.format(at(l, zone)) else "TBD"
+
+    /** "pm", or "" when the time is not known. */
+    fun amPm(l: Launch, zone: ZoneId): String = if (l.timeKnown) amPm(at(l, zone)) else ""
+
+    private fun amPm(z: ZonedDateTime) = if (z.hour < 12) "am" else "pm"
+
+    /** One-line form for notifications: "FRI-12•2", or "DEC". */
+    fun dateLine(l: Launch, zone: ZoneId): String =
+        if (l.dateKnown) "${DOW.format(at(l, zone)).uppercase(Locale.US)}-${monthDay(l, zone)}" else monthDay(l, zone)
+
     /** "9:04pm", or "TBD". */
-    fun timeLine(l: Launch, zone: ZoneId): String = if (l.timeKnown) clock(l.netMillis, zone) else "TBD"
+    fun timeLine(l: Launch, zone: ZoneId): String = hourMinute(l, zone) + amPm(l, zone)
 
     fun whenLine(l: Launch, zone: ZoneId): String = "${dateLine(l, zone)} ${timeLine(l, zone)}"
 
     fun clock(millis: Long, zone: ZoneId): String {
         val z = Instant.ofEpochMilli(millis).atZone(zone)
-        return CLOCK.format(z) + if (z.hour < 12) "am" else "pm"
+        return CLOCK.format(z) + amPm(z)
     }
+
+    private fun plural(n: Long, unit: String) = if (n == 1L) "1 $unit" else "$n ${unit}s"
 
     /**
      * The widget countdown: whole days until launch day, whole hours on launch day,
@@ -77,29 +99,29 @@ object Times {
 
         val launchDay: LocalDate = at(l, zone).toLocalDate()
         val days = ChronoUnit.DAYS.between(today, launchDay)
-        if (!l.timeKnown) return Label(if (days <= 0) "TODAY" else "${days}d", midnight)
+        if (!l.timeKnown) return Label(if (days <= 0) "TODAY" else plural(days, "day"), midnight)
 
         val rem = l.netMillis - now
-        if (rem <= 0) return Label("NOW", l.netMillis + LIVE_WINDOW)
+        if (rem <= 0) return Label("NOW", l.netMillis + LIVE_WINDOW, close = true)
         // Checked before the day rule so a launch just after midnight still gets its clock.
         if (rem <= TICK_FROM) return Ticking(l.netMillis, l.netMillis)
         if (days <= 0) {
             val hours = rem / HOUR
             var change = l.netMillis - hours * HOUR
             if (change <= now) change = l.netMillis - (hours - 1) * HOUR
-            return Label("${hours}h", change)
+            return Label(plural(hours, "hour"), change, close = true)
         }
-        return Label("${days}d", minOf(midnight, l.netMillis - TICK_FROM))
+        return Label(plural(days, "day"), minOf(midnight, l.netMillis - TICK_FROM))
     }
 
-    /** Full countdown for the app screen: "3d 04:05:06" or "4:05:06". */
+    /** Full countdown for the app screen: "3 days 04:05:06" or "4:05:06". */
     fun longCountdown(rem: Long): String {
         val s = maxOf(rem, 0) / 1000
         val d = s / 86_400
         val h = (s % 86_400) / 3600
         val m = (s % 3600) / 60
         val sec = s % 60
-        return if (d > 0) String.format(Locale.US, "%dd %02d:%02d:%02d", d, h, m, sec)
+        return if (d > 0) String.format(Locale.US, "%s %02d:%02d:%02d", plural(d, "day"), h, m, sec)
         else String.format(Locale.US, "%d:%02d:%02d", h, m, sec)
     }
 

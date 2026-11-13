@@ -3,8 +3,14 @@
     <string name="app_name">Vandi Launch</string>
     <string name="header">VANDENBERG LAUNCHES</string>
     <string name="refresh">Refresh</string>
+    <string name="refresh_glyph" translatable="false">↻</string>
     <string name="watch_live">Watch live</string>
     <string name="find_stream">Find stream</string>
+    <string name="hide_video">Hide video</string>
+    <string name="open_original">Open original ↗</string>
+    <string name="fullscreen">Full screen ⤢</string>
+    <string name="exit_fullscreen">Exit full screen</string>
+    <string name="exit_glyph" translatable="false">✕</string>
     <string name="details">Details</string>
     <string name="later">LATER</string>
     <string name="remind_me">REMIND ME BEFORE LAUNCH</string>
@@ -22,6 +28,6 @@
     <string name="no_browser">No app can open this link</string>
     <string name="channel_name">Launch alerts</string>
     <string name="widget_description">Countdown to the next Vandenberg launch</string>
-    <string name="widget_none_top">VSFB</string>
-    <string name="widget_none_bottom">none</string>
+    <string name="widget_none_day">VANDENBERG</string>
+    <string name="widget_none_time">none</string>
 </resources>

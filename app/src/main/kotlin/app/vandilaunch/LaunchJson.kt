@@ -24,10 +24,11 @@ object LaunchJson {
                 continue
             }
             val status = o.optJSONObject("status")
+            val provider = o.optJSONObject("launch_service_provider")
             out += Launch(
                 id = str(o, "id"),
                 name = str(o, "name"),
-                provider = str(o.optJSONObject("launch_service_provider"), "name"),
+                provider = str(provider, "name"),
                 rocket = str(o.optJSONObject("rocket")?.optJSONObject("configuration"), "name"),
                 netMillis = net,
                 precision = o.optJSONObject("net_precision")?.optInt("id", 99) ?: 99,
@@ -35,6 +36,7 @@ object LaunchJson {
                 status = str(status, "name"),
                 pad = str(pad, "name"),
                 slug = str(o, "slug"),
+                providerId = provider?.optInt("id", 0) ?: 0,
             )
         }
         return out.sortedBy { it.netMillis }
@@ -46,6 +48,10 @@ object LaunchJson {
         return firstUrl(o.optJSONArray("vid_urls"), preferType = "Official") to
             firstUrl(o.optJSONArray("info_urls"), preferType = "Official")
     }
+
+    /** Pulls the logo image url out of an `agencies/{id}/` response. */
+    fun parseAgencyLogo(body: String): String? =
+        str(JSONObject(body).optJSONObject("logo"), "image_url").takeIf { it.startsWith("https://") }
 
     private fun firstUrl(arr: JSONArray?, preferType: String): String? {
         if (arr == null) return null
@@ -70,6 +76,7 @@ object LaunchJson {
                     .put("statusId", l.statusId).put("status", l.status).put("pad", l.pad)
                     .put("slug", l.slug).put("live", l.liveUrl ?: JSONObject.NULL)
                     .put("info", l.infoUrl ?: JSONObject.NULL)
+                    .put("providerId", l.providerId).put("logo", l.logoUrl ?: JSONObject.NULL)
             )
         }
         return arr.toString()
@@ -88,6 +95,9 @@ object LaunchJson {
                     status = str(o, "status"), pad = str(o, "pad"), slug = str(o, "slug"),
                     liveUrl = str(o, "live").ifEmpty { null },
                     infoUrl = str(o, "info").ifEmpty { null },
+                    // Absent in caches written by version 1.0.
+                    providerId = o.optInt("providerId", 0),
+                    logoUrl = str(o, "logo").ifEmpty { null },
                 )
             }
         } catch (e: Exception) {

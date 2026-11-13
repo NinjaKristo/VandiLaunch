@@ -12,13 +12,16 @@
 
     <application
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Handles rotation itself so a playing video survives going fullscreen. -->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>

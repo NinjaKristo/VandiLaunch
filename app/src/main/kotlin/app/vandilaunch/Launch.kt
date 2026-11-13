@@ -18,6 +18,9 @@ data class Launch(
     val slug: String,
     val liveUrl: String? = null,
     val infoUrl: String? = null,
+    /** Launch Library agency id of the provider; its logo is looked up separately. */
+    val providerId: Int = 0,
+    val logoUrl: String? = null,
 ) {
     /** The clock time is real, not a placeholder. Only these get countdowns and reminders. */
     val timeKnown: Boolean get() = precision in 0..2
@@ -29,11 +32,6 @@ data class Launch(
 
     /** "Falcon 9 Block 5 | USSF-317" -> "USSF-317". */
     val mission: String get() = name.substringAfter(" | ", name).trim()
-
-    /** "SpaceX · Falcon 9". */
-    val who: String get() = listOf(provider, rocket).filter { it.isNotBlank() }.joinToString(" · ")
-
-    val shortPad: String get() = pad.replace("Space Launch Complex ", "SLC-")
 
     val detailsUrl: String get() = infoUrl ?: "https://spacelaunchnow.me/launch/$slug"
 
