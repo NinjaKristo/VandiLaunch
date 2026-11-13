@@ -112,7 +112,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/muted"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
 
                     <TextView
                         android:id="@+id/time"
@@ -187,20 +187,24 @@
 
                         <Button
                             android:id="@+id/watch"
+                            style="?android:attr/borderlessButtonStyle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:backgroundTint="@color/accent"
-                            android:text="@string/watch_live"
-                            android:textColor="@color/bg" />
+                            android:text="@string/stream"
+                            android:textColor="@color/accent"
+                            android:textSize="12sp" />
 
                         <Button
                             android:id="@+id/details"
+                            style="?android:attr/borderlessButtonStyle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:text="@string/details" />
+                            android:text="@string/details"
+                            android:textColor="@color/muted"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

@@ -26,7 +26,7 @@ class TimesTest {
 
     @Test
     fun formatsDateAndTimeInPieces() {
-        assertEquals("12•2", Times.monthDay(l, zone))
+        assertEquals("Dec 2", Times.monthDay(l, zone))
         assertEquals("Wednesday", Times.dayName(l, zone))
         assertEquals("9:04", Times.hourMinute(l, zone))
         assertEquals("pm", Times.amPm(l, zone))
@@ -35,9 +35,9 @@ class TimesTest {
 
     @Test
     fun formatsOneLineForNotifications() {
-        assertEquals("WED-12•2", Times.dateLine(l, zone))
+        assertEquals("Wed Dec 2", Times.dateLine(l, zone))
         assertEquals("9:04pm", Times.timeLine(l, zone))
-        assertEquals("WED-12•2 9:04pm", Times.whenLine(l, zone))
+        assertEquals("Wed Dec 2 9:04pm", Times.whenLine(l, zone))
         assertEquals("12:30am", Times.clock(at(2026, 12, 2, 0, 30), zone))
         assertEquals("12:00pm", Times.clock(at(2026, 12, 2, 12, 0), zone))
     }
@@ -112,19 +112,19 @@ class TimesTest {
         // Launch Library stores "November" as the last day of the month, midnight UTC,
         // which is still the 29th in California.
         val month = launch(ZonedDateTime.parse("2026-11-30T00:00:00Z").toInstant().toEpochMilli(), precision = 7)
-        assertEquals("NOV", Times.monthDay(month, zone))
+        assertEquals("Nov", Times.monthDay(month, zone))
         assertEquals("", Times.dayName(month, zone))
         assertEquals("TBD", Times.hourMinute(month, zone))
         assertEquals("", Times.amPm(month, zone))
-        assertEquals("NOV TBD", Times.whenLine(month, zone))
+        assertEquals("Nov TBD", Times.whenLine(month, zone))
         val c = Times.count(month, at(2026, 11, 13, 9, 0), zone) as Times.Label
         assertEquals("TBD", c.text)
         assertFalse(c.close)
 
         val day = launch(ZonedDateTime.parse("2026-11-30T00:00:00Z").toInstant().toEpochMilli(), precision = 3)
-        assertEquals("11•30", Times.monthDay(day, zone))
+        assertEquals("Nov 30", Times.monthDay(day, zone))
         assertEquals("Monday", Times.dayName(day, zone))
-        assertEquals("MON-11•30 TBD", Times.whenLine(day, zone))
+        assertEquals("Mon Nov 30 TBD", Times.whenLine(day, zone))
         assertEquals("17 days", (Times.count(day, at(2026, 11, 13, 9, 0), zone) as Times.Label).text)
         assertEquals("TODAY", (Times.count(day, at(2026, 11, 30, 9, 0), zone) as Times.Label).text)
     }

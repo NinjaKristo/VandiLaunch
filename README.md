@@ -2,10 +2,10 @@
 
 A minimal Android app that tells you when rockets launch from Vandenberg Space Force Base, and nothing else.
 
-- **Next launch**: date (`12•2`), day, time and a live countdown, with the provider's logo and rocket on one faded line above. A link to details covers everything else.
+- **Next launch**: date (`Dec 2`), day, time and a live countdown, with the provider's logo and rocket on one faded line above. A link to details covers everything else.
 - **Video**: the webcast plays inside the app, below the countdown. Full screen keeps the countdown on top of the video.
 - **Reminders**: 24 hours, 1 hour and 10 minutes before launch (each can be switched off), plus a notice when a launch within the next two days changes time.
-- **1x1 widget**: `12•2` / `WEDNESDAY` / `9:04pm` / `4 days`. On launch day the countdown moves to the top line: whole hours, then a ticking `H:MM:SS` for the last five hours.
+- **1x1 widget**: `Dec 2` / `WEDNESDAY` / `9:04pm` / `4 days`. On launch day the countdown moves to the top line: whole hours, then a ticking `H:MM:SS` for the last five hours.
 
 Launches without a confirmed time show `TBD` and never trigger a reminder.
 

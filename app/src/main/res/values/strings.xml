@@ -5,7 +5,7 @@
     <string name="refresh">Refresh</string>
     <string name="refresh_glyph" translatable="false">↻</string>
     <string name="watch_live">Watch live</string>
-    <string name="find_stream">Find stream</string>
+    <string name="stream">Stream</string>
     <string name="hide_video">Hide video</string>
     <string name="open_original">Open original ↗</string>
     <string name="fullscreen">Full screen ⤢</string>

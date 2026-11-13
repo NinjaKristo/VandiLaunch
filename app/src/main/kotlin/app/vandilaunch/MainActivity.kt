@@ -198,8 +198,7 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.watch).setText(
             when {
                 web != null -> R.string.hide_video
-                next?.liveUrl != null -> R.string.watch_live
-                else -> R.string.find_stream
+                else -> R.string.stream
             }
         )
     }

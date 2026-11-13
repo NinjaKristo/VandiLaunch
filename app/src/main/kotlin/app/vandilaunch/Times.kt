@@ -55,10 +55,10 @@ object Times {
     private fun at(l: Launch, zone: ZoneId): ZonedDateTime =
         Instant.ofEpochMilli(l.netMillis).atZone(if (l.timeKnown) zone else ZoneOffset.UTC)
 
-    /** "12•2", or just "DEC" when only the month is known. */
+    /** "Dec 2", or just "Dec" when only the month is known. */
     fun monthDay(l: Launch, zone: ZoneId): String {
         val z = at(l, zone)
-        return if (l.dateKnown) "${z.monthValue}•${z.dayOfMonth}" else MONTH.format(z).uppercase(Locale.US)
+        return if (l.dateKnown) "${MONTH.format(z)} ${z.dayOfMonth}" else MONTH.format(z)
     }
 
     /** "Friday", or "" when the day is not known. */
@@ -72,9 +72,9 @@ object Times {
 
     private fun amPm(z: ZonedDateTime) = if (z.hour < 12) "am" else "pm"
 
-    /** One-line form for notifications: "FRI-12•2", or "DEC". */
+    /** One-line form for notifications: "Fri Dec 2", or "Dec". */
     fun dateLine(l: Launch, zone: ZoneId): String =
-        if (l.dateKnown) "${DOW.format(at(l, zone)).uppercase(Locale.US)}-${monthDay(l, zone)}" else monthDay(l, zone)
+        if (l.dateKnown) "${DOW.format(at(l, zone))} ${monthDay(l, zone)}" else monthDay(l, zone)
 
     /** "9:04pm", or "TBD". */
     fun timeLine(l: Launch, zone: ZoneId): String = hourMinute(l, zone) + amPm(l, zone)
