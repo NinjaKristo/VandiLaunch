@@ -12,8 +12,8 @@ android {
         applicationId = "app.vandilaunch"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "1.4"
     }
 
     // The release key lives outside the repo; keystore.properties (gitignored) points at it.

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One row for every launch without a date: "TBD" in the date column, a count per month beside it. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:fontFeatureSettings="tnum"
+        android:text="@string/tbd"
+        android:textColor="@color/text"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tbd_months"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:alpha="0.7"
+        android:lineSpacingExtra="2dp"
+        android:textColor="@color/muted"
+        android:textSize="13sp" />
+</LinearLayout>

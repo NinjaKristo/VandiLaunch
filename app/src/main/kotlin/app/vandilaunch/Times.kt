@@ -2,10 +2,12 @@ package app.vandilaunch
 
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
@@ -54,6 +56,17 @@ object Times {
      */
     private fun at(l: Launch, zone: ZoneId): ZonedDateTime =
         Instant.ofEpochMilli(l.netMillis).atZone(if (l.timeKnown) zone else ZoneOffset.UTC)
+
+    /**
+     * Launches with no date yet, counted per month in time order: "3x NOVEMBER", "4x DECEMBER".
+     */
+    fun undatedByMonth(list: List<Launch>): List<String> =
+        list.filter { !it.dateKnown }
+            .sortedBy { it.netMillis }
+            .groupBy { YearMonth.from(Instant.ofEpochMilli(it.netMillis).atZone(ZoneOffset.UTC)) }
+            .map { (month, launches) ->
+                "${launches.size}x ${month.month.getDisplayName(TextStyle.FULL, Locale.US).uppercase(Locale.US)}"
+            }
 
     /** "Dec 2", or just "Dec" when only the month is known. */
     fun monthDay(l: Launch, zone: ZoneId): String {

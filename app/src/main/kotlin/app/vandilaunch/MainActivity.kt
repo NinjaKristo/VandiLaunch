@@ -178,7 +178,14 @@ class MainActivity : Activity() {
         later.removeAllViews()
         val rest = list.drop(1)
         findViewById<View>(R.id.later_label).visibility = if (rest.isEmpty()) View.GONE else View.VISIBLE
-        for (l in rest) later.addView(row(l, zone))
+        for (l in rest) if (l.dateKnown) later.addView(row(l, zone))
+        // Launches with no date yet collapse into one row of per-month counts.
+        val undated = Times.undatedByMonth(rest)
+        if (undated.isNotEmpty()) {
+            val tbd = layoutInflater.inflate(R.layout.row_tbd, later, false)
+            tbd.findViewById<TextView>(R.id.tbd_months).text = undated.joinToString("\n")
+            later.addView(tbd)
+        }
 
         findViewById<TextView>(R.id.footer).text = buildString {
             append(getString(R.string.credit))
