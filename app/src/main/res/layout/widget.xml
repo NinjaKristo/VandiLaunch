@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 1x1: small date and time on top, the countdown gets the bottom half. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:paddingStart="5dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="5dp"
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:id="@+id/date"
+        style="@style/WidgetLine"
+        android:layout_weight="1"
+        android:autoSizeMaxTextSize="13sp" />
+
+    <TextView
+        android:id="@+id/time"
+        style="@style/WidgetLine"
+        android:layout_weight="1"
+        android:autoSizeMaxTextSize="13sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.8">
+
+        <TextView
+            android:id="@+id/count"
+            style="@style/WidgetLine"
+            android:layout_height="match_parent"
+            android:autoSizeMaxTextSize="26sp"
+            android:fontFamily="sans-serif-medium" />
+
+        <Chronometer
+            android:id="@+id/chrono"
+            style="@style/WidgetLine"
+            android:layout_height="match_parent"
+            android:autoSizeMaxTextSize="26sp"
+            android:fontFamily="sans-serif-medium"
+            android:fontFeatureSettings="tnum"
+            android:textColor="@color/accent"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

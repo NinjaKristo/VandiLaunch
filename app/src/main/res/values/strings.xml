@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vandi Launch</string>
+    <string name="header">VANDENBERG LAUNCHES</string>
+    <string name="refresh">Refresh</string>
+    <string name="watch_live">Watch live</string>
+    <string name="find_stream">Find stream</string>
+    <string name="details">Details</string>
+    <string name="later">LATER</string>
+    <string name="remind_me">REMIND ME BEFORE LAUNCH</string>
+    <string name="remind_24h">24 h</string>
+    <string name="remind_1h">1 h</string>
+    <string name="remind_10m">10 min</string>
+    <string name="loading">Loading…</string>
+    <string name="load_failed">Couldn\'t load schedule</string>
+    <string name="tap_retry">Check your connection, then tap ↻ to retry</string>
+    <string name="no_launches">No launches scheduled</string>
+    <string name="credit">Data: The Space Devs, Launch Library 2</string>
+    <string name="updating">Updating…</string>
+    <string name="never_updated">Not updated yet</string>
+    <string name="offline">update failed, showing saved schedule</string>
+    <string name="no_browser">No app can open this link</string>
+    <string name="channel_name">Launch alerts</string>
+    <string name="widget_description">Countdown to the next Vandenberg launch</string>
+    <string name="widget_none_top">VSFB</string>
+    <string name="widget_none_bottom">none</string>
+</resources>
